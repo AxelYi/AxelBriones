@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <!-- Información básica de la página -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Título de la página que aparece en la pestaña del navegador -->
+    <title>Simulador de Créditos</title>
+    
+    <!-- Enlace al archivo manifest.json para convertir tu página en una PWA -->
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- Meta descripción de la página -->
+    <meta name="description" content="Simulador para calcular préstamos con o sin IVA y diferentes modalidades de pago como semanal o quincenal.">
+
+    <!-- Aquí podrías agregar otros enlaces a archivos CSS o JavaScript, si fuera necesario -->
+    
+    <!-- Enlace a archivo CSS (si tienes) -->
+    <!-- <link rel="stylesheet" href="estilos.css"> -->
+    
+    <!-- Agregar cualquier otro meta tag si lo deseas -->
+</head>
+<body>
+    <h1>Bienvenido al simulador de créditos</h1>
+    
+    <!-- Instrucciones o descripción para el usuario -->
+    <p>Calcula tu préstamo con o sin IVA, y diferentes modalidades de pago como semanal o quincenal.</p>
+
+    <form id="simulador">
+        <label for="montoInicial">Monto Inicial del Crédito:</label>
+        <input type="number" id="montoInicial" required>
+        
+        <label for="meses">Número de Meses:</label>
+        <input type="number" id="meses" required>
+        
+        <label for="porcentajeInteres">Porcentaje de Interés Mensual:</label>
+        <input type="number" id="porcentajeInteres" required>
+        
+        <label for="conIVA">¿Incluir IVA (16%)?</label>
+        <select id="conIVA">
+            <option value="si">Sí</option>
+            <option value="no">No</option>
+        </select>
+        
+        <button type="submit">Calcular</button>
+    </form>
+
+    <div id="resultados">
+        <h2>Resultados del Simulador</h2>
+        <p id="resultadoTotal">Monto total a pagar: </p>
+        <p id="resultadoCuotaSemanal">Cuota semanal: </p>
+        <p id="resultadoCuotaQuincenal">Cuota quincenal: </p>
+        <p id="resultadoConIVA">Monto total con IVA: </p>
+        <p id="resultadoSinIVA">Monto total sin IVA: </p>
+    </div>
+
+    <script>
+        // Función para calcular el préstamo con interés mensual
+        function calcularPrestamoConInteres(montoInicial, porcentajeInteres, meses) {
+            return montoInicial + (montoInicial * (porcentajeInteres / 100) * meses);
+        }
+
+        // Función para calcular el monto total con IVA
+        function calcularMontoConIVA(montoTotal, porcentajeIVA) {
+            return montoTotal * (1 + porcentajeIVA / 100);
+        }
+
+        // Lógica para el simulador
+        document.getElementById("simulador").addEventListener("submit", function(event) {
+            event.preventDefault();
+            
+            const montoInicial = parseFloat(document.getElementById("montoInicial").value);
+            const meses = parseInt(document.getElementById("meses").value);
+            const porcentajeInteres = parseFloat(document.getElementById("porcentajeInteres").value);
+            const respuestaIVA = document.getElementById("conIVA").value;
+
+            // Calcular monto total con interés
+            const montoTotal = calcularPrestamoConInteres(montoInicial, porcentajeInteres, meses);
+
+            // Calcular el monto con IVA si es necesario
+            const porcentajeIVA = 16; // 16% IVA
+            let montoConIVA = montoTotal;
+            if (respuestaIVA === "si") {
+                montoConIVA = calcularMontoConIVA(montoTotal, porcentajeIVA);
+            }
+
+            // Calcular la cuota semanal y quincenal
+            const semanas = meses * 4;  // Suponemos 4 semanas por mes
+            const cuotaSemanal = montoTotal / semanas;
+            const quincenas = meses * 2;  // Suponemos 2 quincenas por mes
+            const cuotaQuincenal = montoTotal / quincenas;
+
+            // Mostrar los resultados
+            document.getElementById("resultadoTotal").textContent = "Monto total a pagar: " + montoTotal;
+            document.getElementById("resultadoCuotaSemanal").textContent = "Tu cuota semanal será: " + cuotaSemanal.toFixed(2);
+            document.getElementById("resultadoCuotaQuincenal").textContent = "Tu cuota quincenal será: " + cuotaQuincenal.toFixed(2);
+            document.getElementById("resultadoConIVA").textContent = "Monto total con IVA: " + montoConIVA.toFixed(2);
+            document.getElementById("resultadoSinIVA").textContent = "Monto total sin IVA: " + montoTotal.toFixed(2);
+        });
+    </script>
+</body>
+</html>
